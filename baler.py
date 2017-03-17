@@ -60,6 +60,41 @@ def tiq_output(reg_file, enr_file):
 
 # oh my god this is such a hack
 
+def bale_reg_json(harvest, output_file):
+    """Outputs harvest list into JSON format
+
+    Args:
+        harvest (list): List of harvested data
+
+        output_file (str): Location of output file to write into
+    """
+    logger.info('Output regular data as JSON to %s' % output_file)
+    columns = ('entity', 'type', 'direction', 'source', 'notes', 'date')
+    entries_list = []
+    for line in harvest:
+        entries_list.append({columns[x]: line[x] for x in range(len(columns))})
+    with open(output_file, 'w') as f:
+        json.dump(entries_list, f)
+
+
+def bale_enr_json(harvest, output_file):
+    """Outputs harvest list into JSON format
+
+    Args:
+        harvest (list): List of harvested data
+
+        output_file (str): Location of output file to write into
+    """
+    logger.info('Output enriched data as JSON to %s' % output_file)
+    columns = ('entity', 'type', 'direction', 'source', 'notes', 'date',
+               'asnumber', 'asname', 'country', 'host', 'rhost')
+    entries_list = []
+    for line in harvest:
+        entries_list.append({columns[x]: line[x] for x in range(len(columns))})
+    with open(output_file, 'w') as f:
+        json.dump(entries_list, f)
+
+
 def bale_reg_csvgz(harvest, output_file):
     """ bale the data as a gziped csv file"""
     logger.info('Output regular data as GZip CSV to %s' % output_file)
@@ -212,9 +247,9 @@ def bale(input_file, output_file, output_format, is_regular):
 
     # TODO: also need plugins here (cf. #23)
     if is_regular:
-        format_funcs = {'csv': bale_reg_csv, 'crits': bale_CRITs}
+        format_funcs = {'csv': bale_reg_csv, 'crits': bale_CRITs, 'json': bale_reg_json}
     else:
-        format_funcs = {'csv': bale_enr_csv, 'crits': bale_CRITs}
+        format_funcs = {'csv': bale_enr_csv, 'crits': bale_CRITs, 'json': bale_enr_json}
     format_funcs[output_format](harvest, output_file)
 
 if __name__ == "__main__":
