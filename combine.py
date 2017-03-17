@@ -49,6 +49,7 @@ if args.tiq_test:
 
 if args.delete:
     # be careful with this when we support a JSON output type
-    os.remove('harvest.json')
+    if out_type != 'json':
+        os.remove('harvest.json')
     os.remove('crop.json')
     os.remove('enrich.json')
